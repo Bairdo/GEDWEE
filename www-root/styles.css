@@ -1,0 +1,162 @@
+/* Remove default bullets */
+
+ul, #field_category {
+  list-style-type: none;
+}
+
+/* Remove margins and padding from the parent ul */
+
+#field_category {
+  margin: 0;
+  padding: 0;
+}
+
+/* Style the caret/arrow */
+
+.caret {
+  cursor: pointer;
+  user-select: none;
+  /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+
+.caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+
+.caret-down::before {
+  transform: rotate(90deg);
+}
+
+/* Hide the nested list */
+
+.nested {
+  display: none;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+
+.active-list {
+  display: block;
+}
+
+/* Device screen */
+
+.field {
+  display: none;
+  /* border: thick solid #000000; */
+}
+
+.field:not(:first-child) {
+  border-top: thick solid #000000;
+}
+
+.field_name {
+  font-weight: bold;
+  text-align: center;
+}
+
+.field_unit {
+  text-align: center;
+}
+
+#device_screen {
+  border: thick solid #000000;
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+#device_screen.show_1 {
+  grid-template-rows: 100%;
+}
+
+#device_screen.show_2 {
+  grid-template-rows: repeat(2, 50%);
+}
+
+#device_screen.show_3 {
+  grid-template-rows: repeat(3, 33%);
+}
+
+#device_screen.show_4 {
+  grid-template-rows: repeat(4, 25%);
+}
+
+#device_screen.show_5, #device_screen.show_6, #device_screen.show_7, #device_screen.show_8, #device_screen.show_9, #device_screen.show_10 {
+  grid-template-rows: repeat(5, 20%);
+}
+
+.show_1_col {
+  display: block;
+}
+
+.show_2_col {
+  display: block;
+  font-size: medium;
+}
+
+.show_1, .show_2, .show_3 {
+  display: block;
+  font-size: xx-large;
+}
+
+.show_4 {
+  display: block;
+  font-size: x-large;
+}
+
+.show_5, .show_6, .show_7, .show_8, .show_9, .show_10 {
+  display: block;
+  font-size: large;
+}
+
+#field_0.show_1_col {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  grid-row: 1;
+}
+
+#field_1.show_1_col {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  grid-row: 2;
+}
+
+#field_2.show_1_col {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  grid-row: 3;
+}
+
+#field_3.show_1_col {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  grid-row: 4;
+}
+
+#field_4.show_1_col {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  grid-row: 5;
+}
+
+.selected {
+  background-color: darkolivegreen;
+}
+
+.warn-gt-10 {
+  background-color: red;
+}
+
+p {
+  margin: 0px;
+  padding: 0px;
+}
+
+/* TODO remove border from 2nd element when show_10*/
