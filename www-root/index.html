@@ -1,28 +1,36 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
-    <head>
-        <link href="./styles.css" rel="stylesheet" />
-        <script src="./jquery-3.5.1.min.js"></script>
-	    <script src="./main.js"></script>
-        <Title>Garmin Edge 520 Data Field Wizard</Title>
-    </head>
-    <body>
-        <div id="Options">
-            <ul>
-                <li id="export" class="opts">Export</li>
-                <li id="export" class="opts">Import</li>
-            </ul>
-        </div>
+
+<head>
+    <link href="./styles.css" rel="stylesheet" />
+    <script src="./jquery-3.5.1.min.js"></script>
+    <script src="./main.js"></script>
+    <Title>Garmin Edge 520 Data Field Wizard</Title>
+</head>
+
+<body>
+    <div id="page">
+        <div class="banner"><h1>Garmin Edge 520 Datafield Wizard</h1></div>
         <div id="nav_bar">
-            <ul>
-                <li class="nav_category">Data Field Editor</li>
-                <li class="nav_category">Other Options</li>
-            </ul>
+            <h2>
+                <ul id="nav_category_list">
+                    <li class="nav_category">Data Field Editor</li>
+                    <li class="nav_category">Other Options</li>
+                </ul>
+            </h2>
+        </div>
+        <div id="options">
+            <h3>
+                <ul id="options_list">
+                    <li id="export" class="opts">Export</li>
+                    <li id="import" class="opts">Import</li>
+                </ul>
+            </h3>
         </div>
         <div id="other_configs"></div>
         <div id="dfe_tree" class="data_field_editor">
             <ul id="field_category">
-                <li id="Cadence"><span  class="caret">Cadence</span>
+                <li id="Cadence"><span class="caret">Cadence</span>
                     <ul class="nested">
                     </ul>
                 </li>
@@ -212,16 +220,16 @@
                         <li><a href="#." onclick="" id="">Vector Status</a></li>
                     </ul>
             </ul>
-            
+
 
         </div>
         <div id="on_screen_list"></div>
         <div id="screen_options">
-            
+
             <div id="screen_1">
                 <div id="screen_number" class="active">1</div>
                 <div id="" class="screen_enabled">Enabled</div>
-                <div>Number of Data Fields: 
+                <div>Number of Data Fields:
                     <select name="num_data_fields" id="num_data_fields">
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -237,79 +245,86 @@
                 </div>
             </div>
         </div>
-    </div>
-        <div id="device_screen" class="device_screen show_4" style="width: 200px; height: 265px; background-color: lightblue;">
-            <div id="field_0" class="field show_1_col">
-                <p class="field_name">Speed</p>
-                <p class="field_unit">
-                    <span class="value">34.4</span>
-                    <span class="unit">km/h</span>
-                </p>
-            </div>
-            <div id="field_1" class="field show_1_col">
-                <p class="field_name">Time</p>
-                <p class="field_unit">
-                    <span class="value">03:15:23</span>
-                    <span class="unit"></span>
-                </p>
-            </div>
-            <div id="field_2" class="field show_1_col">
-                <p class="field_name">Accuracy</p>
-                <p class="field_unit">
-                    <span class="value">5</span>
-                    <span class="unit">m</span>
-                </p>
-            </div>
-            <div id="field_3" class="field show_1_col">
-                <p class="field_name">Heart Rate</p>
-                <p class="field_unit">
-                    <span class="value">156</span>
-                    <span class="unit">bpm</span>
-                </p>
-            </div>
-            <div id="field_4" class="field">
-                <p class="field_name">Temperature</p>
-                <p class="field_unit">
-                    <span class="value">13</span>
-                    <span class="unit">Celcius</span>
-                </p>
-            </div>
-            <div id="field_5" class="field">
-                <p class="field_name">Time to Go</p>
-                <p class="field_unit">
-                    <span class="value">1:00:24</span>
-                    <span class="unit"></span>
-                </p>
-            </div>
-            <div id="field_6" class="field">
-                <p class="field_name">Heading</p>
-                <p class="field_unit">
-                    <span class="value">N</span>
-                    <span class="unit"></span>
-                </p>
-            </div>
-            <div id="field_7" class="field">
-                <p class="field_name">Laps</p>
-                <p class="field_unit">
-                    <span class="value">39</span>
-                    <span class="unit"></span>
-                </p>
-            </div>
-            <div id="field_8" class="field">
-                <p class="field_name">Balance L.</p>
-                <p class="field_unit">
-                    <span class="value">40</span>
-                    <span class="unit">%</span>
-                </p>
-            </div>
-            <div id="field_9" class="field">
-                <p class="field_name">Balance R.</p>
-                <p class="field_unit">
-                    <span class="value">60</span>
-                    <span class="unit">%</span>
-                </p>
+
+        <div id="ds">
+            <div id="device_screen" class="device_screen show_4"
+                style="width: 200px; height: 265px; background-color: lightblue;">
+                <div id="field_0" class="field show_1_col">
+                    <p class="field_name">Speed</p>
+                    <p class="field_unit">
+                        <span class="value">34.4</span>
+                        <span class="unit">km/h</span>
+                    </p>
+                </div>
+                <div id="field_1" class="field show_1_col">
+                    <p class="field_name">Time</p>
+                    <p class="field_unit">
+                        <span class="value">03:15:23</span>
+                        <span class="unit"></span>
+                    </p>
+                </div>
+                <div id="field_2" class="field show_1_col">
+                    <p class="field_name">Accuracy</p>
+                    <p class="field_unit">
+                        <span class="value">5</span>
+                        <span class="unit">m</span>
+                    </p>
+                </div>
+                <div id="field_3" class="field show_1_col">
+                    <p class="field_name">Heart Rate</p>
+                    <p class="field_unit">
+                        <span class="value">156</span>
+                        <span class="unit">bpm</span>
+                    </p>
+                </div>
+                <div id="field_4" class="field">
+                    <p class="field_name">Temperature</p>
+                    <p class="field_unit">
+                        <span class="value">13</span>
+                        <span class="unit">Celcius</span>
+                    </p>
+                </div>
+                <div id="field_5" class="field">
+                    <p class="field_name">Time to Go</p>
+                    <p class="field_unit">
+                        <span class="value">1:00:24</span>
+                        <span class="unit"></span>
+                    </p>
+                </div>
+                <div id="field_6" class="field">
+                    <p class="field_name">Heading</p>
+                    <p class="field_unit">
+                        <span class="value">N</span>
+                        <span class="unit"></span>
+                    </p>
+                </div>
+                <div id="field_7" class="field">
+                    <p class="field_name">Laps</p>
+                    <p class="field_unit">
+                        <span class="value">39</span>
+                        <span class="unit"></span>
+                    </p>
+                </div>
+                <div id="field_8" class="field">
+                    <p class="field_name">Balance L.</p>
+                    <p class="field_unit">
+                        <span class="value">40</span>
+                        <span class="unit">%</span>
+                    </p>
+                </div>
+                <div id="field_9" class="field">
+                    <p class="field_name">Balance R.</p>
+                    <p class="field_unit">
+                        <span class="value">60</span>
+                        <span class="unit">%</span>
+                    </p>
+                </div>
+
             </div>
         </div>
+        <div id="footer"><span>Please don't blame me if something breaks.</span>
+        </div>
+    </div>
+</body>
 
-    </body>
 </html>

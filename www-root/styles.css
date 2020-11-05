@@ -154,9 +154,76 @@ ul, #field_category {
   background-color: red;
 }
 
+.delete_button {
+  margin-left: 8px;
+}
+
 p {
   margin: 0px;
   padding: 0px;
+}
+
+#page {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  grid-template-rows: auto auto auto auto auto;
+  grid-template-areas: "header header header"
+                       ". . ."
+                       "tree list screen"
+                       "bottom bottom bottom"
+                       "footer footer footer";
+}
+
+.banner {
+  grid-area: header;
+
+}
+
+#nav_bar {
+  grid-row: 2;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  text-align: left;
+}
+
+#options {
+  grid-column: 3;
+  text-align: right;
+}
+
+#dfe_tree {
+  grid-area: tree;
+}
+
+#on_screen_list {
+  grid-area: list;
+}
+
+#ds {
+  grid-area: screen;
+}
+
+#screen_options {
+  grid-area: bottom;
+}
+
+#footer {
+  grid-area: footer;
+  height: 40px;
+  border-top: thin dotted black;
+  display: flex;
+}
+
+#footer span {
+  align-self: flex-end;
+}
+
+ul#nav_category_list li{
+  display: inline;
+}
+
+ul#options_list li{
+  display: inline;
 }
 
 /* TODO remove border from 2nd element when show_10*/

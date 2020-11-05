@@ -126,7 +126,7 @@ function getDisplayListItemElement(field_id, name, index) {
 }
 
 function getDeleteButtonElement() {
-    var delete_button = $('<a href="#.">X</a>');
+    var delete_button = $('<a href="#." class="delete_button">X</a>');
     delete_button[0].onclick = function (e) {
         removeFieldFromScreen(e["srcElement"]["parentElement"]);
     };
