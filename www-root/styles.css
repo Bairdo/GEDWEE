@@ -154,7 +154,7 @@ ul, #field_category {
   background-color: red;
 }
 
-.delete_button {
+.delete_button,.up_button,.down_button {
   margin-left: 8px;
 }
 

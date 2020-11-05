@@ -47,7 +47,7 @@ const FIELDS = [{ id: 0, name: "Calories", category: "Calories", min_size: 0, un
 class Screen {
 
     fields = [];
-    num_fields = 10;
+    num_fields = 1;
     enabled = true;
     number = 0;
 
@@ -191,7 +191,6 @@ function removeFieldFromScreen(element) {
     window.currentlySelectedField = -1;
 
     redrawScreen();
-
 }
 
 function getDisplayElement(index, name, value, unit) {
@@ -209,11 +208,13 @@ function setCurrentScreen(newCurrentScreenNum) {
     // draw new garmin and populate new ondisplay.
     window.currentScreen = newCurrentScreenNum - 1;
 
-    redrawScreen();
 
     var s_list_element = $("#on_screen_list");
     s_list_element.empty();
-    getCurrentScreen().populateOnDisplayList(s_list_element);
+    if (window.currentScreen >= 0 ) {
+        redrawScreen();
+        getCurrentScreen().populateOnDisplayList(s_list_element);
+    }
 }
 
 function redrawScreen() {
@@ -229,7 +230,7 @@ function drawDeviceScreen(screen_number) {
     fields.removeClass("show_1_col");
     fields.removeClass("show_2_col");
 
-    var numDisplayFields = getNumDataFields(screen_number);
+    var numDisplayFields = getCurrentScreen().num_fields;
     var ds = $("#device_screen");
     ds.removeClass(["show_1", "show_2", "show_3", "show_4", "show_5",
         "show_6", "show_7", "show_8", "show_9", "show_10"]);
@@ -283,7 +284,10 @@ function insertFieldsIntoTreeList() {
     }
 }
 
-function numFieldsToDisplayChanged() {
+function numFieldsToDisplayChanged(e) {
+    console.log(e);
+    console.log(e["target"].value);
+    getCurrentScreen().setNumberOfFields(parseInt(e["target"].value));
     redrawScreen();
 }
 
@@ -309,10 +313,6 @@ function setShow1Col(field) {
     field.classList.add("show_1_col");
 }
 
-function getNumDataFields(screen_number) {
-    return $(`#num_data_fields_${screen_number}`).val()
-}
-
 function setupNumDataFieldsSpinner(number) {
     $(`#num_data_fields_${number}`)[0].addEventListener('change', numFieldsToDisplayChanged);
 }
@@ -321,10 +321,14 @@ function addScreenListener() {
     $("#addScreenButton")[0].addEventListener('click', addNewScreen);
 }
 
-function selectedScreen(e) {
+function selectedScreenListener(e) {
+    selectedScreen(parseInt(e["srcElement"].id.split("_")[2]));
+}
+
+function selectedScreen(number) {
     hideAllScreens();
-    e["srcElement"].classList.add("activeScreenSelector");
-    var number = e["srcElement"].id.split("_")[2];
+    $(`#screen_selector_${number}`).addClass("activeScreenSelector");
+
     $(`#screen_${number}`).addClass("activeScreen");
     setCurrentScreen(number);
 }
@@ -333,8 +337,98 @@ function addNewScreen() {
     hideAllScreens();
     var number = window.screens.length + 1;
     initialiseScreen(number).addClass("activeScreen");
-    getScreenSelectorButtonElement(number).insertBefore("#addScreenButton");
+    getScreenSelectorButtonElement(number).insertBefore($("#addScreenButton").parent());
     setupNumDataFieldsSpinner(number);
+    setCurrentScreen(number);
+
+}
+
+function deleteScreenListener(e) {
+    var src = e["srcElement"];
+    var num = parseInt(src.id.split("_")[2]);
+
+    for (let i = num+1; i <= window.screens.length; i++) {
+        moveScreenUp(i);
+    }
+
+    $(`#screen_list_item_${window.screens.length}`).remove();
+    $(`#screen_${window.screens.length}`).remove();
+
+    window.screens.splice(window.screens.length-1, 1);
+    if (num > window.screens.length) {
+        num = window.screens.length;
+    }
+    if (num < 1) {
+        num = 0;
+    }
+    selectedScreen(num);
+}
+
+function moveScreenUpListener(e) {
+    var src = e["srcElement"];
+    moveScreenUp(parseInt(src.id.split("_")[2]));
+}
+
+function moveScreenUp(num) {
+    if (num <= 1) {
+        // already at the top
+        return;
+    }
+    var li_clicked = moveScreen(num, num - 1);
+    li_clicked.insertBefore(li_clicked.prev());
+}
+
+function moveScreenDownListener (e) {
+    var src = e["srcElement"];
+    moveScreenDown(parseInt(src.id.split("_")[2]));
+}
+
+function moveScreenDown(num) {
+    if (num >= window.screens.length) {
+        // already at the top
+        return;
+    }
+
+    var li_clicked = moveScreen(num, num + 1);
+    li_clicked.insertAfter(li_clicked.next());
+}
+
+function moveScreen(oldPosition, newPosition) {
+    var li = $(`#screen_list_item_${newPosition}`);
+    for (let c of li.children()) {
+        c.id = c.id.replace(/\d+/g, oldPosition);
+    }
+    
+    var li_clicked = $(`#screen_list_item_${oldPosition}`);
+    for (let c of li_clicked.children()) {
+        c.id = c.id.replace(/\d+/g, newPosition);
+    }
+
+
+    li_clicked.attr("id", li_clicked.attr("id").replace(/\d+/g, newPosition));
+    li.attr("id", li.attr("id").replace(/\d+/g, oldPosition));
+
+    var settings_old = $(`#screen_${oldPosition}`);
+    for (let c of settings_old.children()) {
+        c.id = c.id.replace(/\d+/g, newPosition);
+    }
+
+    var settings_new = $(`#screen_${newPosition}`);
+    for (let c of settings_new.children()) {
+        c.id = c.id.replace(/\d+/g, oldPosition);
+    }
+
+    settings_old.attr("id", settings_old.attr("id").replace(/\d+/g, newPosition));
+    settings_new.attr("id", settings_new.attr("id").replace(/\d+/g, oldPosition));
+    swap(window.screens, oldPosition-1, newPosition-1);
+
+    return li_clicked;
+}
+
+function swap (arr, i, j) {
+    var a = arr[i];
+    arr[i] = arr[j];
+    arr[j] = a;
 }
 
 function hideAllScreens() {
@@ -347,13 +441,24 @@ function initialiseScreen(number) {
     var element = getScreenConfigElement(number)
     $("#screen_settings").append(element);
     return element;
-
 }
 
 function getScreenSelectorButtonElement(number) {
-    var button = $(`<li><a href="#." id="screen_selector_${number}" class="screenSelectorItem activeScreenSelector">Screen ${number}</a></li>`);
-    button[0].addEventListener("click", selectedScreen);
-    return button;
+    var selector = $(`<a href="#." id="screen_selector_${number}" class="screenSelectorItem activeScreenSelector">Screen ${number}</a>`);
+    selector[0].addEventListener("click", selectedScreenListener);
+
+    var delete_ = $(`<a href="#." id="delete_screen_${number}" class="delete_button">X</a>`);
+    delete_[0].addEventListener("click", deleteScreenListener);
+
+    var up = $(`<a href="#." id="up_screen_${number}" class="up_button">&uarr;</a>`);
+    up[0].addEventListener("click", moveScreenUpListener);
+
+    var down = $(`<a href="#." id="down_screen_${number}" class="down_button">&darr;</a>`);
+    down[0].addEventListener("click", moveScreenDownListener);
+    
+    var li = $(`<li id="screen_list_item_${number}"></li>`);
+    li.append(selector, delete_, up, down);
+    return li;
 }
 
 function getScreenConfigElement(number) {
