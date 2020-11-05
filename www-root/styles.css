@@ -167,16 +167,11 @@ p {
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
   grid-template-rows: auto auto auto auto auto;
-  grid-template-areas: "header header header"
-                       ". . ."
-                       "tree list screen"
-                       "bottom bottom bottom"
-                       "footer footer footer";
+  grid-template-areas: "header header header" ". . ." "tree list screen" "screen_selector screen_settings screen_settings" "footer footer footer";
 }
 
 .banner {
   grid-area: header;
-
 }
 
 #nav_bar {
@@ -204,7 +199,7 @@ p {
 }
 
 #screen_options {
-  grid-area: bottom;
+  grid-area: screen_selector;
 }
 
 #footer {
@@ -218,12 +213,32 @@ p {
   align-self: flex-end;
 }
 
-ul#nav_category_list li{
+ul#nav_category_list li {
   display: inline;
 }
 
-ul#options_list li{
+ul#options_list li {
   display: inline;
+}
+
+#screen_selector {
+  grid-area: screen_selector;
+}
+
+#screen_settings {
+  grid-area: screen_settings;
+}
+
+.screen_config {
+  display: none;
+}
+
+.activeScreen {
+  display: block;
+}
+
+.activeScreenSelector {
+  background-color: green;
 }
 
 /* TODO remove border from 2nd element when show_10*/

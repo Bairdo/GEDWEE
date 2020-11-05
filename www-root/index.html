@@ -10,7 +10,9 @@
 
 <body>
     <div id="page">
-        <div class="banner"><h1>Garmin Edge 520 Datafield Wizard</h1></div>
+        <div class="banner">
+            <h1>Garmin Edge 520 Datafield Wizard</h1>
+        </div>
         <div id="nav_bar">
             <h2>
                 <ul id="nav_category_list">
@@ -224,28 +226,15 @@
 
         </div>
         <div id="on_screen_list"></div>
-        <div id="screen_options">
-
-            <div id="screen_1">
-                <div id="screen_number" class="active">1</div>
-                <div id="" class="screen_enabled">Enabled</div>
-                <div>Number of Data Fields:
-                    <select name="num_data_fields" id="num_data_fields">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
-                </div>
+        <div id="screen_selector">
+            <div>
+                <ul id="screen_selector_list">
+                    <li><a id="addScreenButton" href="#.">Add Screen</a></li>
+                </ul>
             </div>
-        </div>
 
+        </div>
+        <div id="screen_settings"></div>
         <div id="ds">
             <div id="device_screen" class="device_screen show_4"
                 style="width: 200px; height: 265px; background-color: lightblue;">

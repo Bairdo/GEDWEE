@@ -49,6 +49,11 @@ class Screen {
     fields = [];
     num_fields = 10;
     enabled = true;
+    number = 0;
+
+    constructor(number) {
+        this.number = number;
+    }
 
     addField(field, position) {
         if (position < 0) {
@@ -133,7 +138,7 @@ function getDeleteButtonElement() {
     return delete_button;
 }
 
-window.screens = [new Screen()];
+window.screens = [];
 window.currentScreen = 0;
 window.currentlySelectedField = -1;
 
@@ -214,17 +219,17 @@ function setCurrentScreen(newCurrentScreenNum) {
 function redrawScreen() {
     var ds_element = $("#device_screen");
     ds_element.empty();
-
-    getCurrentScreen().drawScreen(ds_element);
-    drawDeviceScreen();
+    var currentScreen = getCurrentScreen();
+    currentScreen.drawScreen(ds_element);
+    drawDeviceScreen(currentScreen.number);
 }
 
-function drawDeviceScreen() {
+function drawDeviceScreen(screen_number) {
     var fields = $(".field");
     fields.removeClass("show_1_col");
     fields.removeClass("show_2_col");
 
-    var numDisplayFields = getNumDataFields();
+    var numDisplayFields = getNumDataFields(screen_number);
     var ds = $("#device_screen");
     ds.removeClass(["show_1", "show_2", "show_3", "show_4", "show_5",
         "show_6", "show_7", "show_8", "show_9", "show_10"]);
@@ -304,17 +309,77 @@ function setShow1Col(field) {
     field.classList.add("show_1_col");
 }
 
-function getNumDataFields() {
-    return $("#num_data_fields").val()
+function getNumDataFields(screen_number) {
+    return $(`#num_data_fields_${screen_number}`).val()
 }
 
+function setupNumDataFieldsSpinner(number) {
+    $(`#num_data_fields_${number}`)[0].addEventListener('change', numFieldsToDisplayChanged);
+}
 
-function setupNumDataFieldsSpinner() {
-    $("#num_data_fields")[0].addEventListener('change', numFieldsToDisplayChanged);
+function addScreenListener() {
+    $("#addScreenButton")[0].addEventListener('click', addNewScreen);
+}
+
+function selectedScreen(e) {
+    hideAllScreens();
+    e["srcElement"].classList.add("activeScreenSelector");
+    var number = e["srcElement"].id.split("_")[2];
+    $(`#screen_${number}`).addClass("activeScreen");
+    setCurrentScreen(number);
+}
+
+function addNewScreen() {
+    hideAllScreens();
+    var number = window.screens.length + 1;
+    initialiseScreen(number).addClass("activeScreen");
+    getScreenSelectorButtonElement(number).insertBefore("#addScreenButton");
+    setupNumDataFieldsSpinner(number);
+}
+
+function hideAllScreens() {
+    $(".screenSelectorItem").removeClass("activeScreenSelector");
+    $(".screen_config").removeClass("activeScreen");
+}
+
+function initialiseScreen(number) {
+    window.screens.push(new Screen(number));
+    var element = getScreenConfigElement(number)
+    $("#screen_settings").append(element);
+    return element;
+
+}
+
+function getScreenSelectorButtonElement(number) {
+    var button = $(`<li><a href="#." id="screen_selector_${number}" class="screenSelectorItem activeScreenSelector">Screen ${number}</a></li>`);
+    button[0].addEventListener("click", selectedScreen);
+    return button;
+}
+
+function getScreenConfigElement(number) {
+    return $(`<div id="screen_${number}" class="screen_config">
+    <div id="screen_${number}_name" class="screen_name">Screen ${number}</div>
+    <div id="screen_${number}_enabled" class="screen_enabled">Enabled</div>
+    <div>Number of Data Fields:
+        <select name="num_data_fields" id="num_data_fields_${number}">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select>
+    </div>
+</div>`)
 }
 
 $(document).ready(function () {
     insertFieldsIntoTreeList();
     setupTreeList();
-    setupNumDataFieldsSpinner();
+    addNewScreen();
+    addScreenListener()
 });
