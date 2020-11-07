@@ -374,11 +374,13 @@ class Screen {
         }
     }
 
-    toBinary(screenNumber) {
-        var header = [0x09,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+    getFieldsAsBytes() {
         var fieldsAsBytes = [];
+        var i = 0;
         for (let f of this.fields) {
+            if (i++ > 9) {
+                break;
+            }
             fieldsAsBytes.push(f);
             if (f > 255) {
                 fieldsAsBytes.push(0x01);
@@ -386,8 +388,20 @@ class Screen {
                 fieldsAsBytes.push(0x00);
             }
         }
-        var fourUnknown = [screenNumber, 0, this.enabled? 1:0, this.num_fields];
-        var oneToTen = [1, 2 , 3, 4, 5, 6, 7, 8, 9, 10];
+        for (; i < 10; i++) {
+            // pad, so there is 10 fields in the file. If user hasn't specified 10.
+            fieldsAsBytes.push(0);
+            fieldsAsBytes.push(0x00);
+        }
+        return fieldsAsBytes;
+    }
+
+    toBinary(screenNumber) {
+        var header = [0x09,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+        var fieldsAsBytes = this.getFieldsAsBytes();
+        var fourUnknown = [screenNumber, 0, this.enabled ? 1 : 0, this.num_fields];
+        var oneToTen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         var footer = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
         return [].concat(header).concat(fieldsAsBytes).concat(fourUnknown).concat(oneToTen).concat(footer);
     }
