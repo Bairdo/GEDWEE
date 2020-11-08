@@ -803,6 +803,9 @@ function exportToFit() {
     var bytes = [];
     bytes = bytes.concat(FIT_HEADER);
     var i = 0;
+    if (window.screens.length != 5) {
+        alert("I have not tested fit files with any number of screens other than 5. Beware");
+    }
     for (let screen_id of window.screens) {
         const s = wind.screensDict[screen_id];
         bytes = bytes.concat(s.toBinary(i++));
