@@ -442,18 +442,28 @@ function getDisplayListItemElement(field_id, name, index) {
 function getDeleteButtonElement() {
     var delete_button = $('<a href="#." class="delete_button">X</a>');
     delete_button[0].onclick = function (e) {
-        removeFieldFromScreen(e["srcElement"]["parentElement"]["firstElementChild"]);
+        removeFieldFromScreen(this.parentElement.firstElementChild);
     };
     return delete_button;
 }
 
-window.screens = [];
-window.currentScreen = 0;
+window.screens = []; // id of the screen.
+window.screensDict = {} // id: screen, ...
+window.currentScreenIndex = 0; // index in screens.
 window.currentlySelectedField = -1;
+window.lastScreenId = 0;
+
+function getNextUnusedScreenId() {
+    return window.lastScreenId++;
+}
+
+function getNumberOfScreens() {
+    return window.screens.length;
+}
 
 function getCurrentScreen() {
     // newCurrentScreen starts at 0. so minus one to offset.
-    return window.screens[window.currentScreen];
+    return window.screensDict[window.screens[window.currentScreenIndex]];
 }
 
 
@@ -477,7 +487,7 @@ function selectField(e) {
     } else {
         window.currentlySelectedField = -1;
     }
-};
+}
 
 function addFieldToScreen(field_id) {
     var position = window.currentlySelectedField;
@@ -512,15 +522,15 @@ function getDisplayElement(index, name, value, unit) {
     return element;
 }
 
-function setCurrentScreen(newCurrentScreenNum) {
+function setCurrentScreenIndex(newCurrentScreenNum) {
     // clear the ondisplay and garmin image.
     // draw new garmin and populate new ondisplay.
-    window.currentScreen = newCurrentScreenNum - 1;
+    window.currentScreenIndex = newCurrentScreenNum;
 
 
     var s_list_element = $("#on_screen_list");
     s_list_element.empty();
-    if (window.currentScreen >= 0) {
+    if (window.currentScreenIndex >= 0) {
         redrawScreen();
         getCurrentScreen().populateOnDisplayList(s_list_element);
     }
@@ -531,10 +541,10 @@ function redrawScreen() {
     ds_element.empty();
     var currentScreen = getCurrentScreen();
     currentScreen.drawScreen(ds_element);
-    drawDeviceScreen(currentScreen.number);
+    drawDeviceScreen();
 }
 
-function drawDeviceScreen(screen_number) {
+function drawDeviceScreen() {
     var fields = $(".field");
     fields.removeClass("show_1_col");
     fields.removeClass("show_2_col");
@@ -594,9 +604,7 @@ function insertFieldsIntoTreeList() {
 }
 
 function numFieldsToDisplayChanged(e) {
-    console.log(e);
-    console.log(e["target"].value);
-    getCurrentScreen().setNumberOfFields(parseInt(e["target"].value));
+    getCurrentScreen().setNumberOfFields(parseInt(this.value));
     redrawScreen();
 }
 
@@ -631,7 +639,7 @@ function addScreenListener() {
 }
 
 function selectedScreenListener(e) {
-    selectedScreen(parseInt(e["srcElement"].id.split("_")[2]));
+    selectedScreen(parseInt(this.id.split("_")[2]));
 }
 
 function selectedScreen(number) {
@@ -639,99 +647,80 @@ function selectedScreen(number) {
     $(`#screen_selector_${number}`).addClass("activeScreenSelector");
 
     $(`#screen_${number}`).addClass("activeScreen");
-    setCurrentScreen(number);
+    setCurrentScreenIndex(getScreenIndexOf(number));
+}
+
+function getScreenIndexOf(num) {
+    return window.screens.indexOf(num);
 }
 
 function addNewScreen() {
     hideAllScreens();
-    var number = window.screens.length + 1;
+    var number = getNextUnusedScreenId();
     initialiseScreen(number).addClass("activeScreen");
     getScreenSelectorButtonElement(number).insertBefore($("#addScreenButton").parent());
     setupNumDataFieldsSpinner(number);
-    setCurrentScreen(number);
+    setCurrentScreenIndex(window.screens.length-1);
 
 }
 
 function deleteScreenListener(e) {
-    var src = e["srcElement"];
-    var num = parseInt(src.id.split("_")[2]);
+    var num = parseInt(this.id.split("_")[2]);
 
-    for (let i = num + 1; i <= window.screens.length; i++) {
+    var index = window.screens.indexOf(num);
+    for (let i = index+1; i < getNumberOfScreens(); i++) {
         moveScreenUp(i);
     }
 
-    $(`#screen_list_item_${window.screens.length}`).remove();
-    $(`#screen_${window.screens.length}`).remove();
+    $(`#screen_list_item_${num}`).remove();
+    $(`#screen_${num}`).remove();
 
-    window.screens.splice(window.screens.length - 1, 1);
-    if (num > window.screens.length) {
-        num = window.screens.length;
+    delete window.screensDict[window.screens[getNumberOfScreens()-1]];
+    window.screens.splice(getNumberOfScreens() - 1, 1);
+    if (index > getNumberOfScreens()-1) {
+        index = getNumberOfScreens()-1;
     }
-    if (num < 1) {
-        num = 0;
+    if (index < 1) {
+        index = 0;
     }
-    selectedScreen(num);
+    selectedScreen(index);
 }
 
 function moveScreenUpListener(e) {
-    var src = e["srcElement"];
-    moveScreenUp(parseInt(src.id.split("_")[2]));
+    moveScreenUp(getScreenIndexOf(parseInt(this.id.split("_")[2])));
 }
 
 function moveScreenUp(num) {
-    if (num <= 1) {
+    if (num == window.screens[0]) {
         // already at the top
         return;
     }
     var li_clicked = moveScreen(num, num - 1);
-    li_clicked.insertBefore(li_clicked.prev());
+    $(li_clicked).insertBefore(li_clicked.previousSibling);
 }
 
 function moveScreenDownListener(e) {
-    var src = e["srcElement"];
-    moveScreenDown(parseInt(src.id.split("_")[2]));
+    moveScreenDown(getScreenIndexOf(parseInt(this.id.split("_")[2])));
 }
 
 function moveScreenDown(num) {
-    if (num >= window.screens.length) {
+    if (num == window.screens[window.screens.length-1]) {
         // already at the top
         return;
     }
 
     var li_clicked = moveScreen(num, num + 1);
-    li_clicked.insertAfter(li_clicked.next());
+    $(li_clicked).insertAfter(li_clicked.nextSibling);
+}
+
+function getListItemElement(position) {
+    return $(`#screen_selector_list`).children()[position];
 }
 
 function moveScreen(oldPosition, newPosition) {
-    var li = $(`#screen_list_item_${newPosition}`);
-    for (let c of li.children()) {
-        c.id = c.id.replace(/\d+/g, oldPosition);
-    }
 
-    var li_clicked = $(`#screen_list_item_${oldPosition}`);
-    for (let c of li_clicked.children()) {
-        c.id = c.id.replace(/\d+/g, newPosition);
-    }
-
-
-    li_clicked.attr("id", li_clicked.attr("id").replace(/\d+/g, newPosition));
-    li.attr("id", li.attr("id").replace(/\d+/g, oldPosition));
-
-    var settings_old = $(`#screen_${oldPosition}`);
-    for (let c of settings_old.children()) {
-        c.id = c.id.replace(/\d+/g, newPosition);
-    }
-
-    var settings_new = $(`#screen_${newPosition}`);
-    for (let c of settings_new.children()) {
-        c.id = c.id.replace(/\d+/g, oldPosition);
-    }
-
-    settings_old.attr("id", settings_old.attr("id").replace(/\d+/g, newPosition));
-    settings_new.attr("id", settings_new.attr("id").replace(/\d+/g, oldPosition));
-    swap(window.screens, oldPosition - 1, newPosition - 1);
-
-    return li_clicked;
+    swap(window.screens, oldPosition, newPosition);
+    return getListItemElement(oldPosition);
 }
 
 function swap(arr, i, j) {
@@ -746,9 +735,11 @@ function hideAllScreens() {
 }
 
 function initialiseScreen(number) {
-    window.screens.push(new Screen(number));
-    var element = getScreenConfigElement(number)
+    window.screens.push(number);
+    window.screensDict[number] = new Screen(number);
+    var element = getScreenConfigElement(number);
     $("#screen_settings").append(element);
+    addEnabledButtonListener(number);
     return element;
 }
 
@@ -773,7 +764,10 @@ function getScreenSelectorButtonElement(number) {
 function getScreenConfigElement(number) {
     return $(`<div id="screen_${number}" class="screen_config">
     <div id="screen_${number}_name" class="screen_name">Screen ${number}</div>
-    <div id="screen_${number}_enabled" class="screen_enabled">Enabled</div>
+    <div id="screen_${number}_enabled" class="screen_enabled">
+        <label for="screen_enabled_${number}">Enabled</label>
+        <input type="checkbox" id="enabled_${number}" name="enabled_${number}" checked>
+    </div>
     <div>Number of Data Fields:
         <select name="num_data_fields" id="num_data_fields_${number}">
             <option value="1">1</option>
@@ -800,7 +794,8 @@ function exportToFit() {
     var bytes = [];
     bytes = bytes.concat(FIT_HEADER);
     var i = 0;
-    for (let s of window.screens) {
+    for (let screen_id of window.screens) {
+        const s = wind.screensDict[screen_id];
         bytes = bytes.concat(s.toBinary(i++));
     }
     bytes = bytes.concat(FIT_PAGES).concat(FIT_FOOTER);
