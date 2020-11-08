@@ -761,6 +761,15 @@ function getScreenSelectorButtonElement(number) {
     return li;
 }
 
+function enableButtonStateChanged (e) {
+    window.screensDict[parseInt(this.id.split("_")[1])].enabled = this.checked;
+}
+
+function addEnabledButtonListener(number) {
+    var checkbox = document.querySelector(`input[name=enabled_${number}]`);
+    checkbox.addEventListener( 'change', enableButtonStateChanged);
+}
+
 function getScreenConfigElement(number) {
     return $(`<div id="screen_${number}" class="screen_config">
     <div id="screen_${number}_name" class="screen_name">Screen ${number}</div>
