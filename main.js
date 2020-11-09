@@ -323,6 +323,36 @@ const FIELDS = [{ id: 0, name: "Calories", category: "Calories", min_size: 0, un
 { id: 277, name: "Lap Left PPP", category: "Cycling Dynamics", min_size: 0, unit_metric: "" },
 { id: 278, name: "Stand. Pwr.", category: "Cycling Dynamics", min_size: 0, unit_metric: "w" },
 { id: 279, name: "Lap Stnd. Pwr.", category: "Cycling Dynamics", min_size: 0, unit_metric: "w" },
+{ id: 282, name: "Seat Pwr.", category: "Cycling Dynamics", min_size: 0, unit_metric: "w" },
+{ id: 283, name: "Lap Seat Pwr.", category: "Cycling Dynamics", min_size: 0, unit_metric: "w" },
+{ id: 286, name: "Stand. Cad.", category: "Cycling Dynamics", min_size: 0, unit_metric: "rpm" },
+{ id: 287, name: "Lap Stand. Cad", category: "Cycling Dynamics", min_size: 0, unit_metric: "rpm" },
+{ id: 290, name: "Seat. Cad.", category: "Cycling Dynamics", min_size: 0, unit_metric: "rpm" },
+{ id: 291, name: "Lap Seat. Cad", category: "Cycling Dynamics", min_size: 0, unit_metric: "rpm" },
+{ id: 294, name: "Trainer Res.", category: "", min_size: 0, unit_metric: "%" },
+{ id: 295, name: "Target Power", category: "", min_size: 0, unit_metric: "w" },
+{ id: 316, name: "Lights Conn.", category: "Lights", min_size: 0, unit_metric: "" },
+{ id: 317, name: "Light Battery", category: "Lights", min_size: 0, unit_metric: "" },
+{ id: 318, name: "Beam Angle", category: "Lights", min_size: 0, unit_metric: "" },
+{ id: 319, name: "Light Mode", category: "Lights", min_size: 0, unit_metric: "" },
+// TODO Screen2 crashes when displaying more than 5 fields.
+{ id: 343, name: "HR Graph", category: "", min_size: 1, unit_metric: "graph" },
+{ id: 344, name: "Speed Graph", category: "", min_size: 1, unit_metric: "graph" },
+{ id: 345, name: "", category: "", min_size: 0, unit_metric: "" },
+{ id: 346, name: "", category: "", min_size: 0, unit_metric: "" },
+// These below had fancy graphics
+{ id: 350, name: "Power Bars", category: "Power", min_size: 0, unit_metric: "" },
+{ id: 351, name: "HR AVG, Max", category: "Heart Rate", min_size: 0, unit_metric: "" },
+{ id: 352, name: "Speed AVG Max", category: "Speed", min_size: 0, unit_metric: "" },
+{ id: 353, name: "Cadence AVG Max", category: "Cadence", min_size: 0, unit_metric: "" },
+{ id: 354, name: "Power Avg Max", category: "Power", min_size: 0, unit_metric: "" },
+// TODO Screen4 crashes when displaying more than 8
+
+{ id: 3, name: "", category: "", min_size: 0, unit_metric: "" },
+{ id: 3, name: "", category: "", min_size: 0, unit_metric: "" },
+{ id: 3, name: "", category: "", min_size: 0, unit_metric: "" },
+{ id: 3, name: "", category: "", min_size: 0, unit_metric: "" },
+
 ];
 
 class Screen {
@@ -807,7 +837,7 @@ function exportToFit() {
         alert("I have not tested fit files with any number of screens other than 5. Beware");
     }
     for (let screen_id of window.screens) {
-        const s = wind.screensDict[screen_id];
+        const s = window.screensDict[screen_id];
         bytes = bytes.concat(s.toBinary(i++));
     }
     bytes = bytes.concat(FIT_PAGES).concat(FIT_FOOTER);
