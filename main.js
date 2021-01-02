@@ -348,11 +348,6 @@ const FIELDS = [{ id: 0, name: "Calories", category: "Calories", min_size: 0, un
 { id: 354, name: "Power Avg Max", category: "Power", min_size: 0, unit_metric: "" },
 // TODO Screen4 crashes when displaying more than 8
 
-{ id: 3, name: "", category: "", min_size: 0, unit_metric: "" },
-{ id: 3, name: "", category: "", min_size: 0, unit_metric: "" },
-{ id: 3, name: "", category: "", min_size: 0, unit_metric: "" },
-{ id: 3, name: "", category: "", min_size: 0, unit_metric: "" },
-
 ];
 
 class Screen {
